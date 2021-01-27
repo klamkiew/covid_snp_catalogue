@@ -31,6 +31,7 @@ codon2aminoacid = {
 
 annotationFile = sys.argv[1]
 alignmentPath = sys.argv[2]
+outputPath = sys.argv[3]
 
 def translateCDS(sequence):
   protein = ''
@@ -60,9 +61,9 @@ with open(annotationFile, 'r') as inputStream:
 
 REFERENCE = "NC_045512.2_Wuhan_seafood_market_pneumonia_virus_isolate_Wuhan-Hu-1,_complete_genome"
 
-if len(sys.argv) == 4:
-  knownSNPs = pickle.load(open(sys.argv[3], "rb"))
-  pickeldSNPs = sys.argv[3]
+if len(sys.argv) == 5:
+  knownSNPs = pickle.load(open(sys.argv[4], "rb"))
+  pickeldSNPs = sys.argv[4]
 else:
   knownSNPs = defaultdict(list)
   pickeldSNPs = 'knownSNPs.pkl'
@@ -146,7 +147,7 @@ for isolate, mutations in isolate2mutations.items():
 for isolate, mutations in isolate2mutations.items():
   if not mutations: continue
   sanePath = isolate.replace('/','-').replace('|','-')
-  with open(f"SUMMARY_{sanePath}.txt", 'w') as outputStream:
+  with open(f"{outputPath}/SUMMARY_{sanePath}.txt", 'w') as outputStream:
     if isolate in newRecords:
       outputStream.write(f"NEW ISOLATE\n{isolate}\n\nMutations:\n")
       for mutation in mutations:
@@ -162,7 +163,7 @@ for isolate, mutations in isolate2mutations.items():
         outputStream.write(f'{mutation}: {len(otherIsolates)} out of {len(isolate2mutations)-1} Isolates\n')
 
 sortedMutation = sorted(list(mutation2isolates), key=lambda x:int(x[1:-1]))
-with open("mutation_catalogue.csv", 'w') as outputStream:
+with open("{outputPath}/mutation_catalogue.csv", 'w') as outputStream:
   outputStream.write(";"+";".join(sortedMutation)+'\n')
   for record in alignment:
     isolate = record.id
