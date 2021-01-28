@@ -27,29 +27,26 @@ WARNING: this currently breaks the .csv file produced by the script (see [this i
 
 ```
 NEW ISOLATE
-EPI_ISL_466915
+EPI_ISL_466918
 
 Mutations:
 RNA: c241t -- Protein: Mutation not part of CDS
-RNA: c3037t -- Protein: orf1a: Synonymous mutation Y925Y
-RNA: c3092t -- Protein: orf1a: P943L
-RNA: c14408t -- Protein: orf1ab: Synonymous mutation P314P
-RNA: g15327t -- Protein: orf1ab: L621F
-RNA: a23403g -- Protein: S: D614E
-RNA: g25855t -- Protein: ORF3a: D155V
-RNA: g26840a -- Protein: M: R107S
-RNA: c27999t -- Protein: ORF8: P36L
+RNA: t2321c -- Protein: ORF1ab: Synonymous mutation L686L
+RNA: c3037t -- Protein: ORF1ab: Synonymous mutation Y925Y
+RNA: c3092t -- Protein: ORF1ab: P943S
+RNA: c14408t -- Protein: Mutation not part of CDS
+RNA: g15327t -- Protein: Mutation not part of CDS
+RNA: a23403g -- Protein: S: D614G
+RNA: c27999t -- Protein: ORF8: P36S
 
 Mutations are also observed in:
 c241t: 239 out of 285 Isolates
+t2321c: 0 out of 285 Isolates
 c3037t: 228 out of 285 Isolates
 c3092t: 12 out of 285 Isolates
 c14408t: 230 out of 285 Isolates
 g15327t: 12 out of 285 Isolates
 a23403g: 243 out of 285 Isolates
-g25855t: 7 out of 285 Isolates
-g26840a: 11 out of 285 Isolates
 c27999t: 12 out of 285 Isolates
-
 
 ```
