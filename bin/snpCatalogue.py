@@ -163,7 +163,7 @@ for isolate, mutations in isolate2mutations.items():
         outputStream.write(f'{mutation}: {len(otherIsolates)} out of {len(isolate2mutations)-1} Isolates\n')
 
 sortedMutation = sorted(list(mutation2isolates), key=lambda x:int(x[1:-1]))
-with open("{outputPath}/mutation_catalogue.csv", 'w') as outputStream:
+with open(f"{outputPath}/mutation_catalogue.csv", 'w') as outputStream:
   outputStream.write(";"+";".join(sortedMutation)+'\n')
   for record in alignment:
     isolate = record.id

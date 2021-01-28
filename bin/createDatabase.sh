@@ -16,7 +16,7 @@ WD="$(dirname $0)"
 SEQ="$1"
 DIR="$(dirname $(realpath $SEQ))"
 CPU=8
-REF="$WD"/reference/ncbi_reference_nc045512.fasta
+REF="$WD"/../reference/ncbi_reference_nc045512.fasta
 
 if [ $# -gt 1 ]; then
 	SNPS="$2"
@@ -58,9 +58,9 @@ fi
 
 # SNP analyses and report the overall SNP overview
 if [ "$SNPS" ]; then
-	python3 "$WD"/snpCatalogue.py "$WD"/reference/sars-cov-2_nc045512.gff3 "$DIR"/"$BN"_ncbiRef_mafft_fasta.aln "$DIR/snp_summaries" "$SNPS"
+	python3 "$WD"/snpCatalogue.py "$WD"/../reference/sars-cov-2_nc045512.gff3 "$DIR"/"$BN"_ncbiRef_mafft_fasta.aln "$DIR/snp_summaries" "$SNPS"
 else
-	python3 "$WD"/snpCatalogue.py "$WD"/reference/sars-cov-2_nc045512.gff3 "$DIR"/"$BN"_ncbiRef_mafft_fasta.aln "$DIR/snp_summaries"
+	python3 "$WD"/snpCatalogue.py "$WD"/../reference/sars-cov-2_nc045512.gff3 "$DIR"/"$BN"_ncbiRef_mafft_fasta.aln "$DIR/snp_summaries"
 fi
 
 if [ $? -eq 3 ]; then
