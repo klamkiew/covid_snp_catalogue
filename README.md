@@ -6,7 +6,7 @@ A small, rather hacky, script that takes a bunch of SARS-CoV-2 genomes and compa
 
 Dependencies:
 ```bash
-conda create -n covid_snp_catalogue -c bioconda python=3.7 biopython mafft && conda activate covid_snp_catalogue
+conda create -n covid_snp_catalogue -c bioconda python biopython mafft && conda activate covid_snp_catalogue
 ```
 
 In theory, the `createDatabase.sh` script should do everything for you. 
