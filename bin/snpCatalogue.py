@@ -10,33 +10,42 @@ from collections import defaultdict
 from collections import Counter
 from Bio import AlignIO
 
-codon2aminoacid = {
-        'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
-        'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
-        'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
-        'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
-        'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
-        'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
-        'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
-        'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
-        'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
-        'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
-        'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
-        'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
-        'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
-        'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
-        'TAC':'Y', 'TAT':'Y', 'TAA':'*', 'TAG':'*',
-        'TGC':'C', 'TGT':'C', 'TGA':'*', 'TGG':'W',
-  }
+# codon2aminoacid = {
+#         'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
+#         'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
+#         'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
+#         'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
+#         'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
+#         'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
+#         'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
+#         'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
+#         'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
+#         'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
+#         'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
+#         'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
+#         'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
+#         'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
+#         'TAC':'Y', 'TAT':'Y', 'TAA':'*', 'TAG':'*',
+#         'TGC':'C', 'TGT':'C', 'TGA':'*', 'TGG':'W',
+#   }
 
 annotationFile = sys.argv[1]
 alignmentPath = sys.argv[2]
+outputPath = sys.argv[3]
+
+
+bases = "TCAG"
+codons = [a + b + c for a in bases for b in bases for c in bases]
+amino_acids = 'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG'
+codon2aminoacid = dict(zip(codons,amino_acids))
 
 def translateCDS(sequence):
+  assert(len(sequence)%3 == 0)
   protein = ''
   for x in range(0,len(sequence),3):
     codon = sequence[x:x+3]
     if len(codon) != 3:
+      print("ERROR! ORF is not dividable by 3.")
       exit(1)
     try:
       protein += codon2aminoacid[codon]
@@ -60,9 +69,9 @@ with open(annotationFile, 'r') as inputStream:
 
 REFERENCE = "NC_045512.2_Wuhan_seafood_market_pneumonia_virus_isolate_Wuhan-Hu-1,_complete_genome"
 
-if len(sys.argv) == 4:
-  knownSNPs = pickle.load(open(sys.argv[3], "rb"))
-  pickeldSNPs = sys.argv[3]
+if len(sys.argv) == 5:
+  knownSNPs = pickle.load(open(sys.argv[4], "rb"))
+  pickeldSNPs = sys.argv[4]
 else:
   knownSNPs = defaultdict(list)
   pickeldSNPs = 'knownSNPs.pkl'
@@ -129,7 +138,7 @@ for isolate, mutations in isolate2mutations.items():
     if cds:
       cds = cds[0]
 
-      mutatedSeq = translateCDS(referenceSequence[cds[1]:pos] + mut.upper() + referenceSequence[pos+1:cds[2]])
+      mutatedSeq = translateCDS(referenceSequence[cds[1]:pos-1] + mut.upper() + referenceSequence[pos:cds[2]])
       refSeq = proteins[cds[0]]
       for idx, aa in enumerate(refSeq):
         if aa != mutatedSeq[idx] and mutatedSeq[idx] != "X":
@@ -146,7 +155,7 @@ for isolate, mutations in isolate2mutations.items():
 for isolate, mutations in isolate2mutations.items():
   if not mutations: continue
   sanePath = isolate.replace('/','-').replace('|','-')
-  with open(f"SUMMARY_{sanePath}.txt", 'w') as outputStream:
+  with open(f"{outputPath}/SUMMARY_{sanePath}.txt", 'w') as outputStream:
     if isolate in newRecords:
       outputStream.write(f"NEW ISOLATE\n{isolate}\n\nMutations:\n")
       for mutation in mutations:
@@ -162,7 +171,7 @@ for isolate, mutations in isolate2mutations.items():
         outputStream.write(f'{mutation}: {len(otherIsolates)} out of {len(isolate2mutations)-1} Isolates\n')
 
 sortedMutation = sorted(list(mutation2isolates), key=lambda x:int(x[1:-1]))
-with open("mutation_catalogue.csv", 'w') as outputStream:
+with open(f"{outputPath}/mutation_catalogue.csv", 'w') as outputStream:
   outputStream.write(";"+";".join(sortedMutation)+'\n')
   for record in alignment:
     isolate = record.id
