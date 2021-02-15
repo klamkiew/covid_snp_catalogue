@@ -4,6 +4,11 @@
 
 A small, rather hacky, script that takes a bunch of SARS-CoV-2 genomes and compares them to the RefSeq genome.
 
+Dependencies:
+```bash
+conda create -n covid_snp_catalogue -c bioconda python biopython mafft && conda activate covid_snp_catalogue
+```
+
 In theory, the `createDatabase.sh` script should do everything for you. 
 The only input needed is a multiple fasta file with SARS-CoV-2 genomes of interest.
 
